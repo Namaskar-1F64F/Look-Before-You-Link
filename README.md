@@ -1,39 +1,57 @@
-# news.ycombinator1.com
+# LookBeforeYou.Link
 
-This site is not affiliated with YCombinator or Hacker News.
+LookBeforeYou.Link is a web application that allows users to preview the content of a link before clicking it. It provides a concise summary of a website's content, ensuring users know exactly where they're going and what to expect. The application is designed with a playful and fun theme, making it enjoyable to use while promoting a safer browsing experience.
 
-This service lets you add a single character to [Hacker News](https://news.ycombinator.com) links to add social media and OpenGraph previews for sharing on things like Slack or Discord or Twitter or Teams. [Read more about it in the Hacker News announcement here.](https://news.ycombinator.com/item?id=30181167)
+## Features
 
-## Slack App
+- Instantly preview the content of a link before clicking
+- Get a concise summary of a website's content
+- No logs or user information stored
+- Interactive and animated user interface
+- Supports both server-side and client-side rendering
 
-Install the Slack application to automatically get previews (unfurls) for `news.ycombinator.com` links.
+## How the Code Works
 
-[![Add to Slack](https://platform.slack-edge.com/img/add_to_slack.png)](https://slack.com/oauth/v2/authorize?client_id=124731001364.4852465343846&scope=links:read,links:write&user_scope=)
+The LookBeforeYou.Link application is built using React, a popular JavaScript library for building user interfaces. It fetches and processes website content to provide users with a summary of the target site's content. Here's a brief overview of how the code works:
 
-It looks like this:
+**User Interface**: The application has an interactive and animated UI built with React components. Users enter a URL and click the "Leap into Link Safety!" button to initiate the process. The UI also includes an informative demo section that explains the steps involved in generating the content summary.
 
-<img src="https://user-images.githubusercontent.com/137158/221394895-7a6a29a3-3685-4784-bf27-0746e79e19b5.png" width="500" height="267" alt="screenshot of Slack integration"/>
+**Fetching Website Content**: When a user submits a URL, the application sends a request to the server. The server fetches the content of the target website using a combination of headless browser technology (Puppeteer) and standard HTTP requests. This ensures that both static and dynamic websites are supported.
 
-## Discord / Twitter / Manual Usage
+**Processing Content**: Once the website content is fetched, it is processed using Rehype/Remark/Unified, libraries for parsing and manipulating HTML. The code extracts relevant information from the site's content, into trimmed Markdown (can't send too much to openai).
 
-Simply add a `1` to your Hacker News link, such as `https://news.ycombinator1.com/item?id=30167605`, and you'll see a rich preview instead of a plain URL.
+**Generating a Summary**: The extracted content is then converted into a concise summary using a openai. This process maintains the context of the information, ensuring that the summary is both accurate and informative.
 
-On Slack you'll see:
+**Displaying the Results**: The generated summary is returned in the meta tags. This allows apps like Telegram, Twitter, Discord, etc. to display the information in-line. Users can review the summary before deciding whether to visit the target website.
 
-![Slack preview of story](https://user-images.githubusercontent.com/137158/152107529-4aef2e19-3761-4021-9530-e7830373a4b6.png)
+**Privacy and Security**: The application does not store any logs or user information, ensuring that users can preview links without compromising their privacy or security.
 
-...or for a comment:
+## Getting Started
 
-![Slack preview of comment](https://user-images.githubusercontent.com/137158/152107576-c8090184-93cc-4ccf-a5ec-81877081408f.png)
+### Prerequisites
 
-On Discord you'll see:
+Node.js v18.x
+Yarn
 
-![Discord preview](https://user-images.githubusercontent.com/137158/152107677-16301c32-bee1-41b0-8247-5d2bfbdf896b.png)
+### Installation
 
-On Twitter you'll see:
+```bash
+yarn i && yarn dev
+```
 
-![Twitter preview](https://user-images.githubusercontent.com/137158/152107766-42a4f926-ee66-4d85-b48a-af14c1fb1c44.png)
+Open your browser and navigate to http://localhost:3000. The application should be running.
 
-Powered by [Vercel](https://vercel.com/) and the [Hacker News API](https://github.com/HackerNews/API).
+### Usage
 
-[Source on GitHub](https://github.com/statico/ycombinator1.com)
+1. Enter a URL into the input box.
+2. Click the "Leap into Link Safety!" button.
+3. View the extracted meta tags and content summary.
+4. If desired, click the link to be redirected to the target website.
+
+### Contributing
+
+Contributions are welcome! Please read our contributing guidelines for more information on how to contribute to the project.
+
+### License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
