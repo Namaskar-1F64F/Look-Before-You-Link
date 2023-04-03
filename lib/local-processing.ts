@@ -8,7 +8,7 @@ export function extractCleanMetaTags(html) {
       !tag.includes("next-head-count")
   );
   if (metaTags) {
-    return metaTags.map((tag) => tag.replace(/\//g, "")).join("\n");
+    return metaTags.map((tag) => decodeURIComponent(tag)).join("\n");
   }
 
   return "No meta tags found";

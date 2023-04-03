@@ -14,7 +14,8 @@ const urlRegex = new RegExp(
 );
 
 export async function getServerSideProps(context) {
-  const url = context.req.url.slice(1).replace("https:/", "https://");
+  let url = context.req.url.slice(1).replace("https:/", "https://");
+  if (!url.startsWith("https://")) url = "https://" + url;
   if (!urlRegex.test(url)) return { props: {} };
   const { content, status } = await fetchWebsiteContent(url);
 
