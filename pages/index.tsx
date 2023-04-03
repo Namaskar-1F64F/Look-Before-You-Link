@@ -1,6 +1,5 @@
 import { extractCleanMetaTags } from "lib/content-processing";
 import Head from "next/head";
-import Script from "next/script";
 import { useState, useRef } from "react";
 
 declare global {
@@ -29,7 +28,7 @@ const LandingPage = () => {
   return (
     <>
       <Head>
-        <Script src="https://unpkg.com/shiki"></Script>
+        <script src="https://unpkg.com/shiki"></script>
         <title>👀 Look Before you Link</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta
