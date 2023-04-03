@@ -1,8 +1,9 @@
 import { getMeta } from "lib/headless-ai";
-import { fetchWebsiteContent, getSummaryFromText } from "lib/headless-chrome";
+import { fetchWebsiteContent } from "lib/thats-so-fetch";
 import { Meta } from "lib/Meta";
 import Head from "next/head";
 import { useEffect } from "react";
+import { getSummaryFromText } from "lib/content-processing";
 
 const urlRegex = new RegExp(
   "^(https?:\\/\\/)?" + // protocol
@@ -50,8 +51,6 @@ export async function getServerSideProps(context) {
 }
 
 export default function Page({ metadata, url }) {
-  console.log("meow");
-
   useEffect(() => {
     setTimeout(() => {
       if (typeof window !== "undefined") {

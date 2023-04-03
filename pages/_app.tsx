@@ -1,3 +1,4 @@
+import "../lib/landing.css";
 export default function MyApp({ Component, pageProps }) {
   return (
     <>

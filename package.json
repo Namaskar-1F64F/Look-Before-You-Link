@@ -27,17 +27,17 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.279.0",
+    "cheerio": "^1.0.0-rc.12",
+    "chrome-aws-lambda": "6.0.0",
     "date-fns": "^2.29.3",
     "html-entities": "^2.3.3",
     "html-to-text": "^9.0.4",
     "next": "^13.2.1",
     "openai": "^3.2.1",
     "pluralize": "^8.0.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "chrome-aws-lambda": "6.0.0",
     "puppeteer-core": "6.0.0",
-    "cheerio": "^1.0.0-rc.12"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown"

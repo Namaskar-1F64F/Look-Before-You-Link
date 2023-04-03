@@ -1,0 +1,93 @@
+.landing-page {
+  font-family: "Arial", sans-serif;
+  text-align: center;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.title {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+}
+
+.animated-text {
+  display: inline-block;
+  animation: changeColor 3s infinite;
+}
+
+@keyframes changeColor {
+  0% {
+    color: #f06;
+  }
+
+  50% {
+    color: #09f;
+  }
+
+  100% {
+    color: #f06;
+  }
+}
+
+.demo input {
+  padding: 1rem;
+  width: 100%;
+  font-size: 2rem;
+  border-radius: 0.5rem;
+  border: 1px solid #ccc;
+  margin: 1rem 0;
+}
+
+.demo button {
+  padding: 1rem;
+  font-size: 2rem;
+  border-radius: 0.5rem;
+  background-color: #09f;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-left: 1rem;
+}
+
+.loading {
+  font-size: 1.5rem;
+  margin-top: 1rem;
+}
+
+.steps {
+  font-size: 1.4rem;
+  text-align: left;
+  padding: 1rem;
+  background-color: #f8f8f8;
+  border-radius: 1rem;
+  margin-top: 2rem;
+}
+
+.steps ol {
+  list-style: none;
+  list-style-position: inside;
+}
+
+.privacy-note {
+  font-size: 1rem;
+  margin-top: 1.5rem;
+  color: #666;
+}
+
+.meta-data {
+  font-size: 1rem;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.meta-data pre {
+  text-align: left;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.meta-data pre pre {
+  padding: 1rem;
+  border-radius: 16px;
+}
