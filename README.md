@@ -26,6 +26,24 @@ The LookBeforeYou.Link application is built using React, a popular JavaScript li
 
 **Privacy and Security**: The application does not store any logs or user information, ensuring that users can preview links without compromising their privacy or security.
 
+## Known Limitations and Future Improvements
+
+While LookBeforeYou.Link provides a useful service for previewing website content, there are some limitations and areas for improvement:
+
+**Single Page Applications (SPAs)**: Currently, the application uses fetch to retrieve website content, which does not work well with SPAs. Previously, we used headless Chrome, which supports SPAs, but it took too long to spin up. We are exploring alternative solutions for handling SPAs more efficiently.
+
+**Redirection**: When a user clicks on the link to visit the target website, the application performs a fresh analysis to generate meta tags. This could potentially be optimized by testing browser agents and forwarding the user directly to the target site without re-analyzing the content.
+
+**More Specific Meta**: We aim to improve the metadata extraction process to provide more specific and accurate information about the target website. This includes refining the algorithm used to generate the content summary.
+
+**Enhanced Visuals**: We are working on adding a more engaging visual element to the application, such as a custom image or graphic, to make the user experience even more enjoyable.
+
+**Error Handling**: Implementing better error handling to provide informative feedback to the user when a URL cannot be processed, such as when the target website is unreachable or the content cannot be parsed.
+
+**Performance**: Continuously working on improving the performance of the application, such as by optimizing server-side processing, caching, and implementing best practices for efficient code execution.
+
+_By addressing these limitations and continuously refining the application, we aim to provide a more robust and enjoyable user experience for previewing website content with LookBeforeYou.Link._
+
 ## Getting Started
 
 ### Prerequisites
