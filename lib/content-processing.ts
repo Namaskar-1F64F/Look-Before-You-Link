@@ -79,8 +79,13 @@ export async function getSummaryFromText(text: string) {
 
 export function extractCleanMetaTags(html) {
   const metaTagPattern = /<meta[^>]*>/g;
-  const metaTags = html.match(metaTagPattern);
-
+  let metaTags = html.match(metaTagPattern);
+  metaTags = metaTags.filter(
+    (tag) =>
+      !tag.includes("charSet") &&
+      !tag.includes("viewport") &&
+      !tag.includes("next-head-count")
+  );
   if (metaTags) {
     debugger;
     console.log(metaTags);

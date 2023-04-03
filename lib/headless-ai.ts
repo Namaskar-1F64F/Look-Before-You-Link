@@ -44,6 +44,7 @@ export type Meta = {
 };
 
 export const getMeta = async (metadata: Metadata): Promise<Meta> => {
+  return null;
   const titleRequest = openai.createCompletion({
     model: "text-davinci-003",
     prompt: GET_TITLE_PROMPT(metadata),
