@@ -6,33 +6,15 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 const context = ({ content }: Metadata) => `
-  headings: These are important: ${content.headings
-    .map((heading) => heading.text)
-    .join(", ")}
-  paragraphs: this content is important ${content.paragraphs
-    .map((paragraph) => paragraph.text)
-    .join(" ")}
-  tables: this content is important ${content.tables
-    .map((table) => JSON.stringify(table, null, 2))
-    .join(" ")}
+  site content in markdown: ${content.markdown}
   `;
-const GET_TITLE_PROMPT = (
+const GET_COMBINED_PROMPT = (
   metadata: Metadata
-) => `I would like you to create the title of this website.  use the following context to help. answer with definitive language. this title needs to be descriptive and short. possibly incorporate the name of the website or the tagline.
+) => `I would like you to create the title of this website, a description of the website, and a fun fact about the website. the title should be descriptive and short. the description must be between 140 and 160 characters. the fun fact should also be between 140 and 160 characters. This fact should preferably be about statistics that seem important. If it was a tiwtter post, for example, the important stats would be likes and re-tweets. do not mention that it is fun.  use the following context to help. answer with definitive language. possibly incorporate the name of the website or the tagline. The output should be as follows:
 
-${context(metadata)}
-`;
-
-const GET_DESCRIPTION_PROMPT = (
-  metadata: Metadata
-) => `I would like you to create the description of this website. it must be between 140 and 160 characters. use the following context to help. answer with definitive language.
-
-${context(metadata)}
-`;
-
-const GET_FUN_PROMPT = (
-  metadata: Metadata
-) => `I would like you to create a fun fact about this website. use the following context to help. answer with definitive language.
+title:
+description:
+fun fact:
 
 ${context(metadata)}
 `;
@@ -44,35 +26,18 @@ export type Meta = {
 };
 
 export const getMeta = async (metadata: Metadata): Promise<Meta> => {
-  return null;
-  const titleRequest = openai.createCompletion({
+  const metaRequest = await openai.createCompletion({
     model: "text-davinci-003",
-    prompt: GET_TITLE_PROMPT(metadata),
-    temperature: 0.5,
-    max_tokens: 200,
-  });
-  const descriptionRequest = openai.createCompletion({
-    model: "text-davinci-003",
-    prompt: GET_DESCRIPTION_PROMPT(metadata),
-    temperature: 0.5,
-    max_tokens: 200,
-  });
-  const funRequest = openai.createCompletion({
-    model: "text-davinci-003",
-    prompt: GET_FUN_PROMPT(metadata),
-    temperature: 0.5,
-    max_tokens: 200,
+    prompt: GET_COMBINED_PROMPT(metadata),
+    temperature: 0.2,
+    max_tokens: 500,
   });
 
-  const [titleResponse, descriptionResponse, funResponse] = await Promise.all([
-    titleRequest,
-    descriptionRequest,
-    funRequest,
-  ]);
-
-  const title = titleResponse.data.choices[0].text;
-  const description = descriptionResponse.data.choices[0].text;
-  const fun = funResponse.data.choices[0].text;
-
+  const metaResponse = metaRequest.data.choices[0].text;
+  console.log(metaResponse);
+  const [title, description, fun] = metaResponse.split("\n").map((line) => {
+    const [, value] = line.split(":");
+    return value.trim();
+  });
   return { title, description, fun };
 };

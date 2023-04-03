@@ -16,7 +16,7 @@ const urlRegex = new RegExp(
 );
 
 export async function getServerSideProps(context) {
-  const url = context.req.url.join("/").replace("https:/", "https://");
+  const url = context.req.url.slice(1).replace("https:/", "https://");
   if (!urlRegex.test(url)) return { props: {} };
   const { content, status } = await fetchWebsiteContent(url);
 
@@ -24,8 +24,6 @@ export async function getServerSideProps(context) {
 
   const summary = await getSummaryFromText(content);
   const generated = await getMeta(summary);
-  // if summary.image is not null, then there's maybe a relative path?
-  // if so then we need to prepend the url to it, but remove the possible trailing slash
   if (summary.image && summary.image.startsWith("/")) {
     summary.image = url.replace(/\/$/, "") + summary.image;
   }

@@ -4,7 +4,6 @@ export function Meta({ description, image, title, url }) {
       <title>{title}</title>
       <meta name="description" content={description} />
 
-      <meta itemProp="name" content="My writing." />
       <meta itemProp="description" content={description} />
       <meta itemProp="image" content={image} />
 
