@@ -19,9 +19,17 @@ export async function getServerSideProps(context) {
 
   if (!urlRegex.test(url)) return { props: {} };
 
-  const content = await fetchWebsiteContent(url);
+  const { content, status } = await fetchWebsiteContent(url);
+
+  if (status !== 200) return { props: {} };
+
   const summary = await getSummaryFromText(content);
   const generated = await getMeta(summary);
+  // if summary.image is not null, then there's maybe a relative path?
+  // if so then we need to prepend the url to it, but remove the possible trailing slash
+  if (summary.image && summary.image.startsWith("/")) {
+    summary.image = url.replace(/\/$/, "") + summary.image;
+  }
 
   const metadata = {
     title: summary.title || generated.title,
@@ -42,17 +50,16 @@ export async function getServerSideProps(context) {
 }
 
 export default function Page({ metadata, url }) {
-  if (!metadata) return <></>;
   console.log("meow");
 
   useEffect(() => {
     setTimeout(() => {
       if (typeof window !== "undefined") {
-        // window.location.href = url;
+        window.location.href = url;
       }
     }, 10);
   });
-
+  if (!metadata) return <></>;
   return (
     <Head>
       <Meta

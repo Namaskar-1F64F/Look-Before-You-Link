@@ -17,12 +17,12 @@ export async function fetchWebsiteContent(url) {
 
   const page = await browser.newPage();
 
-  await page.goto(url, { waitUntil: "networkidle2" });
-
+  const response = await page.goto(url, { waitUntil: "networkidle2" });
+  const status = response.status();
   const content = await page.content();
   await browser.close();
 
-  return content;
+  return { content, status };
 }
 
 function extractText(element) {
