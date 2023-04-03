@@ -1,4 +1,4 @@
-import { Head } from "next/document";
+import Head from "next/head";
 import "../lib/landing.css";
 export default function MyApp({ Component, pageProps }) {
   return (
