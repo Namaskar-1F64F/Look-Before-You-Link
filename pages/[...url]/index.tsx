@@ -26,8 +26,8 @@ export async function getServerSideProps(context) {
   };
 }
 
-export default function Page({ generated, url }) {
-  if (!generated) return null;
+export default function Page({ metadata, url }) {
+  if (!metadata) return null;
 
   setTimeout(() => {
     if (window) {
@@ -37,9 +37,9 @@ export default function Page({ generated, url }) {
 
   return (
     <Meta
-      title={generated.title}
-      description={generated.description}
-      image={generated.image}
+      title={metadata.title}
+      description={metadata.description}
+      image={metadata.image}
       url={url}
     />
   );
