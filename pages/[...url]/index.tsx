@@ -30,7 +30,7 @@ export default function Page({ metadata, url }) {
   if (!metadata) return null;
 
   setTimeout(() => {
-    if (typeof window !== undefined) {
+    if (typeof window !== "undefined") {
       window.location.href = url;
     }
   });
