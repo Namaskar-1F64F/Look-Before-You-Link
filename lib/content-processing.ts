@@ -12,8 +12,7 @@ async function processContent(content) {
   // Extract data using Cheerio
   const title = $("title").text();
   const description = $('meta[name="description"]').attr("content");
-  const image =
-    $('meta[property="og:image"]').attr("content") || $("img").attr("src");
+  const image = $('meta[property="og:image"]').attr("content");
 
   // Process HTML content and convert it to Markdown
   const markdown = await unified()
