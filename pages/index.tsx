@@ -11,13 +11,19 @@ declare global {
 const LandingPage = () => {
   const [inputUrl, setInputUrl] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
   const preRef = useRef(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError(false);
     if (typeof window !== "undefined") {
       const response = await fetch(`/${inputUrl}`);
+      if (!response.ok) {
+        setError(true);
+        return setLoading(false);
+      }
       const data = await response.text();
       const highlighter = await window.shiki.getHighlighter({ theme: "nord" });
       const html = highlighter.codeToHtml(extractCleanMetaTags(data), "html");
@@ -91,6 +97,7 @@ const LandingPage = () => {
             <button type="submit">🧙‍♂️ AI Magic, Make it Happen! ✨</button>
           </form>
           {loading && <div className="loading">Loading...</div>}
+          {error && <div className="loading">Error...</div>}
           <div className="meta-data">
             <pre ref={preRef} />
           </div>

@@ -4,6 +4,7 @@ import rehypeParse from "rehype-parse";
 import rehypeRemark from "rehype-remark";
 import remarkStringify from "remark-stringify";
 import redis from "./redis";
+import remarkGfm from "remark-gfm";
 
 async function processContent(content) {
   const $ = load(content);
@@ -18,6 +19,7 @@ async function processContent(content) {
   const markdown = await unified()
     .use(rehypeParse, { fragment: true })
     .use(rehypeRemark)
+    .use(remarkGfm)
     .use(remarkStringify)
     .process(content);
 
