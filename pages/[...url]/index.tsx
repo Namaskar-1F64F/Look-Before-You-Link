@@ -1,6 +1,3 @@
-import { useEffect } from "react";
-import { useRouter } from "next/router";
-
 import { getMeta } from "lib/headless-ai";
 import { fetchWebsiteContent, getSummaryFromText } from "lib/headless-chrome";
 import { Meta } from "lib/Meta";
@@ -31,13 +28,12 @@ export async function getServerSideProps(context) {
 
 export default function Page({ generated, url }) {
   if (!generated) return null;
-  const router = useRouter();
 
-  useEffect(() => {
-    setTimeout(() => {
-      router.push(url);
-    }, 10);
-  }, [router, url]);
+  setTimeout(() => {
+    if (window) {
+      window.location.href = url;
+    }
+  });
 
   return (
     <Meta

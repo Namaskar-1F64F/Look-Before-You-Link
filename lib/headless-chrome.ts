@@ -1,7 +1,7 @@
 import edgeChromium from "chrome-aws-lambda";
-
 import puppeteer from "puppeteer-core";
 import { load } from "cheerio";
+
 const LOCAL_CHROME_EXECUTABLE =
   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 
@@ -14,7 +14,9 @@ export async function fetchWebsiteContent(url) {
     args: edgeChromium.args,
     headless: false,
   });
+
   const page = await browser.newPage();
+
   await page.goto(url, { waitUntil: "networkidle2" });
 
   const content = await page.content();
