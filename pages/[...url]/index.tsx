@@ -1,9 +1,7 @@
 import { getMeta } from "lib/headless-ai";
 import { fetchWebsiteContent } from "lib/thats-so-fetch";
-import { Meta } from "lib/Meta";
-import Head from "next/head";
-import { useEffect } from "react";
 import { getSummaryFromText } from "lib/content-processing";
+import MainContent from "lib/MainContent";
 
 const urlRegex = new RegExp(
   "^(https?:\\/\\/)?" + // protocol
@@ -22,8 +20,8 @@ export async function getServerSideProps(context) {
 
   if (status !== 200) return { props: {} };
 
-  const summary = await getSummaryFromText(content);
-  const generated = await getMeta(summary);
+  const summary = await getSummaryFromText(url, content);
+  const generated = await getMeta(url, summary);
   if (summary.image && summary.image.startsWith("/")) {
     summary.image = url.replace(/\/$/, "") + summary.image;
   }
@@ -47,22 +45,5 @@ export async function getServerSideProps(context) {
 }
 
 export default function Page({ metadata, url }) {
-  useEffect(() => {
-    setTimeout(() => {
-      if (typeof window !== "undefined") {
-        window.location.href = url;
-      }
-    }, 10);
-  });
-  if (!metadata) return <></>;
-  return (
-    <Head>
-      <Meta
-        title={metadata.title}
-        description={metadata.description}
-        image={metadata.image}
-        url={url}
-      />
-    </Head>
-  );
+  return <MainContent metadata={metadata} url={url} />;
 }

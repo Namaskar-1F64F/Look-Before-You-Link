@@ -3,6 +3,7 @@ import { unified } from "unified";
 import rehypeParse from "rehype-parse";
 import rehypeRemark from "rehype-remark";
 import remarkStringify from "remark-stringify";
+import redis from "./redis";
 
 async function processContent(content) {
   const $ = load(content);
@@ -46,22 +47,30 @@ export type Metadata = {
   rawHtml: string;
 };
 
-export async function getSummaryFromText(text: string) {
-  return await processContent(text);
-}
+export async function getSummaryFromText(url, text): Promise<Metadata> {
+  return new Promise(async (resolve, reject) => {
+    // Check if the summary is in cache
+    redis.get(`summary-${url}`, async (err, cachedSummary) => {
+      if (err) {
+        reject(err);
+      }
 
-export function extractCleanMetaTags(html) {
-  const metaTagPattern = /<meta[^>]*>/g;
-  let metaTags = html.match(metaTagPattern);
-  metaTags = metaTags.filter(
-    (tag) =>
-      !tag.includes("charSet") &&
-      !tag.includes("viewport") &&
-      !tag.includes("next-head-count")
-  );
-  if (metaTags) {
-    return metaTags.map((tag) => tag.replace(/\//g, "")).join("\n");
-  }
+      if (cachedSummary) {
+        resolve(JSON.parse(cachedSummary));
+      } else {
+        try {
+          const summary = await processContent(text);
 
-  return "No meta tags found";
+          const result = summary;
+
+          redis.setex(`summary-${url}`, 60 * 60 * 3, JSON.stringify(result));
+
+          resolve(result);
+        } catch (error) {
+          console.error(`Error generating summary from ${url}:`, error);
+          resolve(null);
+        }
+      }
+    });
+  });
 }

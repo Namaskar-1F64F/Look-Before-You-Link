@@ -1,4 +1,4 @@
-import { extractCleanMetaTags } from "lib/content-processing";
+import { extractCleanMetaTags } from "lib/local-processing";
 import Head from "next/head";
 import { useState, useRef } from "react";
 

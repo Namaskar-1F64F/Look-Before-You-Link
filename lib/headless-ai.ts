@@ -1,5 +1,6 @@
 import { Configuration, OpenAIApi } from "openai";
 import { Metadata } from "./content-processing";
+import redis from "./redis";
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -25,19 +26,48 @@ export type Meta = {
   fun: string;
 };
 
-export const getMeta = async (metadata: Metadata): Promise<Meta> => {
-  const metaRequest = await openai.createCompletion({
-    model: "text-davinci-003",
-    prompt: GET_COMBINED_PROMPT(metadata),
-    temperature: 0.2,
-    max_tokens: 500,
-  });
+export const getMeta = async (
+  url: string,
+  metadata: Metadata
+): Promise<Meta> => {
+  return new Promise(async (resolve, reject) => {
+    // Check if the meta is in cache
+    redis.get(`meta-${url}`, async (err, cachedMeta) => {
+      if (err) {
+        reject(err);
+      }
 
-  const metaResponse = metaRequest.data.choices[0].text;
-  console.log(metaResponse);
-  const [title, description, fun] = metaResponse.split("\n").map((line) => {
-    const [, value] = line.split(":");
-    return value.trim();
+      if (cachedMeta) {
+        // Return the cached meta
+        resolve(JSON.parse(cachedMeta));
+      } else {
+        // Generate the meta and store it in cache
+        try {
+          const metaRequest = await openai.createCompletion({
+            model: "text-davinci-003",
+            prompt: GET_COMBINED_PROMPT(metadata),
+            temperature: 0.2,
+            max_tokens: 500,
+          });
+
+          const metaResponse = metaRequest.data.choices[0].text;
+          const [title, description, fun] = metaResponse
+            .split("\n")
+            .map((line) => {
+              const [, value] = line.split(":");
+              return value.trim();
+            });
+
+          const result = { title, description, fun };
+
+          redis.setex(`meta-${url}`, 60 * 60 * 3, JSON.stringify(result));
+
+          resolve(result);
+        } catch (error) {
+          console.error(`Error generating meta from ${url}:`, error);
+          resolve({ title: null, description: null, fun: null });
+        }
+      }
+    });
   });
-  return { title, description, fun };
 };
