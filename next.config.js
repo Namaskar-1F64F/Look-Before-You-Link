@@ -2,8 +2,8 @@ module.exports = {
   async rewrites() {
     return [
       {
-        source: "/item",
-        destination: "/api/item",
+        source: "/favicon.ico",
+        destination: "/",
       },
     ];
   },

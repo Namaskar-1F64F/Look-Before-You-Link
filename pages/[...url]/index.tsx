@@ -30,6 +30,7 @@ export async function getServerSideProps(context) {
 }
 
 export default function Page({ generated, url }) {
+  if (!generated) return null;
   const router = useRouter();
 
   useEffect(() => {
