@@ -21,15 +21,13 @@ const mergeMetadata = (
   } = metadataFromOpenai;
   const { title, description, image } = parsedFromWebsite;
   let imageToSend = image;
-
   if (image && image.startsWith("/")) {
     imageToSend = url.replace(/\/$/, "") + image;
   } else {
-    imageToSend = `https://sven.soy/og?title=${
+    imageToSend = `https://sven.soy/og?title=${encodeURI(
       title || generatedTitle
-    }&description=${fun}`;
+    )}&description=${encodeURI(fun)}`;
   }
-
   return {
     title: title || generatedTitle,
     description: description || generatedDescription,

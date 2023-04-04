@@ -18,15 +18,17 @@ export const generateMetadataFromText = async (
   const metaRequest = await openaiClient.createCompletion({
     model: "text-davinci-003",
     prompt: GET_COMBINED_PROMPT(text),
-    temperature: 0.1,
+    temperature: 0,
     max_tokens: 500,
   });
 
   const metaResponse = metaRequest.data.choices[0].text;
-  const [title, description, fun] = metaResponse.split("\n").map((line) => {
-    const [, value] = line.split(":");
-    return value?.trim();
-  });
-
+  const metaResponseWithoutBlankLines = metaResponse.replace(/^\s*\n/gm, "");
+  const [title, description, fun] = metaResponseWithoutBlankLines
+    .split("\n")
+    .map((line) => {
+      const [, value] = line.split(":");
+      return value?.trim();
+    });
   return { title, description, fun };
 };
