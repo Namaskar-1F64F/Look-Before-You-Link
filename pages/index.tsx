@@ -1,6 +1,7 @@
-import { extractCleanMetaTags } from "lib/local-processing";
-import Head from "next/head";
 import { useState, useRef } from "react";
+import Head from "next/head";
+
+import { extractCleanMetaTags } from "lib/local-processing";
 
 declare global {
   interface Window {
@@ -35,6 +36,11 @@ const LandingPage = () => {
     <>
       <Head>
         <script src="https://unpkg.com/shiki"></script>
+        <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+          integrity="sha384-iBBGR+zY7R7Vc9Xp9W8+3U6Dz0H3v2c1Lq8f0UJr59vyf//wp4Y4h+7V3xYxkreJ"
+        />
         <title>👀 Look Before you Link</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta
@@ -103,7 +109,7 @@ const LandingPage = () => {
           </div>
         </div>
         <p>
-          Made with 🖐️ and 🤖 on{" "}
+          Made with 🖐️ and 🤖 • Open Source @{" "}
           <a href="https://github.com/Namaskar-1F64F/Look-Before-You-Link">
             GitHub
           </a>

@@ -1,6 +1,7 @@
-import { Meta } from "lib/Meta";
-import Head from "next/head";
 import { useEffect } from "react";
+import Head from "next/head";
+
+import { Metadata } from "lib/components/Metadata";
 
 export default function MainContent({ metadata, url }) {
   useEffect(() => {
@@ -13,7 +14,7 @@ export default function MainContent({ metadata, url }) {
   if (!metadata) return <></>;
   return (
     <Head>
-      <Meta
+      <Metadata
         title={metadata.title}
         description={metadata.description}
         image={metadata.image}

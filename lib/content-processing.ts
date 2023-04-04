@@ -3,75 +3,55 @@ import { unified } from "unified";
 import rehypeParse from "rehype-parse";
 import rehypeRemark from "rehype-remark";
 import remarkStringify from "remark-stringify";
-import redis from "./redis";
 import remarkGfm from "remark-gfm";
+import { HTMLMetadata } from "./types";
 
-async function processContent(content) {
-  const $ = load(content);
+const URL_REGEX = new RegExp(
+  "^(https?:\\/\\/)?" +
+    "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" +
+    "((\\d{1,3}\\.){3}\\d{1,3}))" +
+    "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" +
+    "(\\?[;&a-z\\d%_.~+=-]*)?" +
+    "(\\#[-a-z\\d_]*)?$",
+  "i"
+);
 
-  // Extract data using Cheerio
+async function processHtml(rawHtml: string) {
+  const $ = load(rawHtml);
+
   const title = $("title").text();
   const description = $('meta[name="description"]').attr("content");
   const image = $('meta[property="og:image"]').attr("content");
 
-  // Process HTML content and convert it to Markdown
   const markdown = await unified()
     .use(rehypeParse, { fragment: true })
     .use(rehypeRemark)
     .use(remarkGfm)
     .use(remarkStringify)
-    .process(content);
+    .process(rawHtml);
 
   const markdownContent = String(markdown);
-  // send only 3800 characters to openai
-  const openaiContent = markdownContent.slice(0, 3800);
-  const metadata: Metadata = {
+
+  return {
     title,
     description,
     image,
     content: {
-      markdown: openaiContent,
+      markdown: markdownContent.slice(0, 3800),
     },
-    rawHtml: content,
+    rawHtml,
   };
-
-  return metadata;
 }
 
-export type Metadata = {
-  title: string;
-  description: string;
-  image: string;
-  content: {
-    markdown: string;
-  };
-  rawHtml: string;
+export async function getMarkdownFromHtml(
+  rawHtml: string
+): Promise<HTMLMetadata> {
+  return await processHtml(rawHtml);
+}
+
+export const parseUrlOrDie = (url: string): string => {
+  url = url.slice(1).replace("https:/", "https://");
+  if (!url.startsWith("https://")) url = "https://" + url;
+  if (!URL_REGEX.test(url)) throw new Error("Invalid URL");
+  return url;
 };
-
-export async function getSummaryFromText(url, text): Promise<Metadata> {
-  return new Promise(async (resolve, reject) => {
-    // Check if the summary is in cache
-    redis.get(`summary-${url}`, async (err, cachedSummary) => {
-      if (err) {
-        reject(err);
-      }
-
-      if (cachedSummary) {
-        resolve(JSON.parse(cachedSummary));
-      } else {
-        try {
-          const summary = await processContent(text);
-
-          const result = summary;
-
-          redis.setex(`summary-${url}`, 60 * 60 * 72, JSON.stringify(result));
-
-          resolve(result);
-        } catch (error) {
-          console.error(`Error generating summary from ${url}:`, error);
-          resolve(null);
-        }
-      }
-    });
-  });
-}

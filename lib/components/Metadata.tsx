@@ -1,4 +1,4 @@
-export function Meta({ description, image, title, url }) {
+export function Metadata({ description, image, title, url }) {
   return (
     <head>
       <title>{title}</title>

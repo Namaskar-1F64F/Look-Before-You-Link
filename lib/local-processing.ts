@@ -11,5 +11,5 @@ export function extractCleanMetaTags(html) {
     return metaTags.map((tag) => decodeURIComponent(tag)).join("\n");
   }
 
-  return "No meta tags found";
+  return "No meta tags found.";
 }

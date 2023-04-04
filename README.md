@@ -34,6 +34,8 @@ While LookBeforeYou.Link provides a useful service for previewing website conten
 
 **Redirection**: When a user clicks on the link to visit the target website, the application performs a fresh analysis to generate meta tags. This could potentially be optimized by testing browser agents and forwarding the user directly to the target site without re-analyzing the content.
 
+- ✅ Mostly-fixed with redis caching.
+
 **More Specific Meta**: We aim to improve the metadata extraction process to provide more specific and accurate information about the target website. This includes refining the algorithm used to generate the content summary.
 
 **Enhanced Visuals**: We are working on adding a more engaging visual element to the application, such as a custom image or graphic, to make the user experience even more enjoyable.

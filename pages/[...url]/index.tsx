@@ -1,42 +1,77 @@
-import { getMeta } from "lib/headless-ai";
-import { fetchWebsiteContent } from "lib/thats-so-fetch";
-import { getSummaryFromText } from "lib/content-processing";
-import MainContent from "lib/MainContent";
+import { generateMetadataFromText } from "lib/headless-ai";
+import { fetchWebsiteContentOrDie } from "lib/thats-so-fetch";
+import { getMarkdownFromHtml, parseUrlOrDie } from "lib/content-processing";
+import MainContent from "lib/components/MainContent";
+import { SiteMetadata, GeneratedMedatada, HTMLMetadata } from "lib/types";
+import {
+  DEFAULT_CACHE_TIME,
+  GENERATED_METADATA_KEY,
+  redisClient,
+} from "lib/api/redis";
 
-const urlRegex = new RegExp(
-  "^(https?:\\/\\/)?" + // protocol
-    "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
-    "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
-    "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
-    "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
-    "(\\#[-a-z\\d_]*)?$",
-  "i" // fragment locator
-);
+const mergeMetadata = (
+  url: string,
+  parsedFromWebsite: HTMLMetadata,
+  metadataFromOpenai: GeneratedMedatada
+) => {
+  const {
+    title: generatedTitle,
+    description: generatedDescription,
+    fun,
+  } = metadataFromOpenai;
+  const { title, description, image } = parsedFromWebsite;
+  let imageToSend = image;
 
-export async function getServerSideProps(context) {
-  let url = context.req.url.slice(1).replace("https:/", "https://");
-  if (!url.startsWith("https://")) url = "https://" + url;
-  if (!urlRegex.test(url)) return { props: {} };
-  const { content, status } = await fetchWebsiteContent(url);
-
-  if (status !== 200) return { props: {} };
-
-  const summary = await getSummaryFromText(url, content);
-  const generated = await getMeta(url, summary);
-  if (summary.image && summary.image.startsWith("/")) {
-    summary.image = url.replace(/\/$/, "") + summary.image;
+  if (image && image.startsWith("/")) {
+    imageToSend = url.replace(/\/$/, "") + image;
+  } else {
+    imageToSend = `https://sven.soy/og?title=${
+      title || generatedTitle
+    }&description=${fun}`;
   }
 
-  const metadata = {
-    title: summary.title || generated.title,
-    description: summary.description || generated.description,
-    url: url,
-    image:
-      summary.image ||
-      `https://sven.soy/og?title=${
-        summary.title || generated.title
-      }&description=${generated.fun}`,
+  return {
+    title: title || generatedTitle,
+    description: description || generatedDescription,
+    url,
+    image: imageToSend,
   };
+};
+
+const getMetadataOrDie = async (url) => {
+  const generatedMetadataFromCache = await redisClient.get(
+    GENERATED_METADATA_KEY(url)
+  );
+  if (generatedMetadataFromCache) {
+    return JSON.parse(generatedMetadataFromCache);
+  }
+  const rawHtml = await fetchWebsiteContentOrDie(url);
+  const websiteMarkdownSummary: HTMLMetadata = await getMarkdownFromHtml(
+    rawHtml
+  );
+  const metadataFromOpenai: GeneratedMedatada = await generateMetadataFromText(
+    websiteMarkdownSummary.content.markdown
+  );
+
+  const mergedMetadata = mergeMetadata(
+    url,
+    websiteMarkdownSummary,
+    metadataFromOpenai
+  );
+
+  await redisClient.setex(
+    GENERATED_METADATA_KEY(url),
+    DEFAULT_CACHE_TIME,
+    JSON.stringify(mergedMetadata)
+  );
+
+  return mergedMetadata;
+};
+
+export async function getServerSideProps(context) {
+  const url = parseUrlOrDie(context.req.url);
+  const metadata: SiteMetadata = await getMetadataOrDie(url);
+
   return {
     props: {
       metadata,
@@ -45,6 +80,12 @@ export async function getServerSideProps(context) {
   };
 }
 
-export default function Page({ metadata, url }) {
+export default function Metadata({
+  metadata,
+  url,
+}: {
+  metadata: SiteMetadata;
+  url: string;
+}) {
   return <MainContent metadata={metadata} url={url} />;
 }
