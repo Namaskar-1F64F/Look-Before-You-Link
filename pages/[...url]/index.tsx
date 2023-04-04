@@ -28,6 +28,7 @@ const mergeMetadata = (
       title || generatedTitle
     )}&description=${encodeURI(fun)}`;
   }
+  imageToSend = imageToSend.replace(/%25/g, "%2525").replace("#", "%23");
   return {
     title: title || generatedTitle,
     description: description || generatedDescription,
