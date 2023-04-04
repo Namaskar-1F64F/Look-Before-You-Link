@@ -64,7 +64,7 @@ export async function getSummaryFromText(url, text): Promise<Metadata> {
 
           const result = summary;
 
-          redis.setex(`summary-${url}`, 60 * 60 * 3, JSON.stringify(result));
+          redis.setex(`summary-${url}`, 60 * 60 * 72, JSON.stringify(result));
 
           resolve(result);
         } catch (error) {

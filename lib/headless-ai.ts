@@ -60,7 +60,7 @@ export const getMeta = async (
 
           const result = { title, description, fun };
 
-          redis.setex(`meta-${url}`, 60 * 60 * 3, JSON.stringify(result));
+          redis.setex(`meta-${url}`, 60 * 60 * 72, JSON.stringify(result));
 
           resolve(result);
         } catch (error) {

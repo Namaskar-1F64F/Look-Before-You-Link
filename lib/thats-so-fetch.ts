@@ -21,7 +21,7 @@ export async function fetchWebsiteContent(
 
             const result = { content, status };
 
-            redis.setex(url, 60 * 60 * 3, JSON.stringify(result));
+            redis.setex(url, 60 * 60 * 72, JSON.stringify(result));
 
             resolve(result);
           } else {
